@@ -30,7 +30,9 @@ def save_job():
     role = role_entry.get().strip()
     status = status_entry.get().strip()
 
-    if not company or not role or not status:
+    required_fields = [company, role, status]
+
+    if not all(required_fields):
         messagebox.showerror(title="ERROR EMPTY FIELD", 
                              message="Please enter valid company or role")
         return 
