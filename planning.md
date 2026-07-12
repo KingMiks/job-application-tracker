@@ -1,17 +1,17 @@
 # Job Application Tracker Planning
 
 ## Fields
-- Company
-- Role
+- Company ✅
+- Role ✅
 - Job link
-- Status
+- Status ✅
 - Date applied
 - Follow-up Date
 - Notes
 
 
 ## Status Options
-- Saved
+- Saved ✅
 - Applied
 - Interview
 - Rejected
@@ -22,6 +22,6 @@
 - Technical Interview
 
 ## First UI Goal
-- App title
-- Add Job button
-- Placeholder table/list area
+- App title ✅
+- Add Job button ✅
+- Placeholder table/list area ✅
