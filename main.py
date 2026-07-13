@@ -105,14 +105,14 @@ notes_entry.grid(row=8, column=1)
 
 # Buttons
 
-def print_selected_data():
+def print_selected_row():
     selected_data = tree.selection()
 
     for data in selected_data:
         row_values = tree.item(data)["values"]
         print(row_values)
 
-def delete_selected_data():
+def delete_selected_row():
     selected_rows = tree.selection()
 
     if not selected_rows:
@@ -122,15 +122,47 @@ def delete_selected_data():
 
     tree.delete(*selected_rows)
 
+def update_selected_row():
+    update_row = tree.focus()
+
+    if not update_row:
+        return
+    
+    # Get full row array
+    current_row = list(tree.item(update_row, 'values'))
+
+    # Extract fresh text
+    new_company = company_entry.get().strip()
+    new_role = role_entry.get().strip()
+    new_job_link = job_link_entry.get().strip()
+    new_status = status_entry.get().strip()
+    new_date_applied = date_applied_entry.get().strip()
+    new_follow_up_date = follow_up_date_entry.get().strip()
+    new_notes = notes_entry.get().strip()
+
+    current_row[0] = new_company
+    current_row[1] = new_role
+    current_row[2] = new_job_link
+    current_row[3] = new_status
+    current_row[4] = new_date_applied
+    current_row[5] = new_follow_up_date
+    current_row[6] = new_notes
+
+    tree.item(update_row, values=current_row)
+
+
+
+
 # Save job
 
 save_job_button = tk.Button(form_frame, text= "Save job", command=save_job)
 save_job_button.grid(row=9)
-select_button = tk.Button(form_frame, text="Show selection", command=print_selected_data)
+select_button = tk.Button(form_frame, text="Show selection", command=print_selected_row)
 select_button.grid(row=9, column=1)
-delete_button = tk.Button(form_frame, text="Delete Data", command=delete_selected_data)
+delete_button = tk.Button(form_frame, text="Delete Data", command=delete_selected_row)
 delete_button.grid(row=9, column=2)
-
+update_button = tk.Button(form_frame, text="Update selected row", comman=update_selected_row)
+update_button.grid(row=9, column=3)
 
 
 
