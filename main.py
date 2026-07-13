@@ -67,7 +67,7 @@ def save_job():
     job_data = [company, role, job_link, status, date_applied, follow_up_date, notes]
 
     if not all(job_data):
-        messagebox.showerror(title="ERROR EMPTY FIELD", 
+        messagebox.showerror(title="ERROR: EMPTY FIELD", 
                              message="Please correctly insert data")
         return 
     tree.insert(parent= "", index="end", values=job_data)
@@ -105,10 +105,31 @@ notes_entry.grid(row=8, column=1)
 
 # Buttons
 
+def print_selected_data():
+    selected_data = tree.selection()
+
+    for data in selected_data:
+        row_values = tree.item(data)["values"]
+        print(row_values)
+
+def delete_selected_data():
+    selected_rows = tree.selection()
+
+    if not selected_rows:
+        messagebox.showerror(title="ERROR: NO DATA SELECTED", 
+                             message="Please select a data entry")
+        return 
+
+    tree.delete(*selected_rows)
+
 # Save job
 
 save_job_button = tk.Button(form_frame, text= "Save job", command=save_job)
 save_job_button.grid(row=9)
+select_button = tk.Button(form_frame, text="Show selection", command=print_selected_data)
+select_button.grid(row=9, column=1)
+delete_button = tk.Button(form_frame, text="Delete Data", command=delete_selected_data)
+delete_button.grid(row=9, column=2)
 
 
 
