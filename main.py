@@ -52,6 +52,14 @@ def load_from_json():
     except Exception as e:
         messagebox.showerror("Error", f"Load failed: {e}")
 
+def clear_entries():
+    company_entry.delete(0, tk.END)
+    role_entry.delete(0, tk.END)
+    job_link_entry.delete(0, tk.END)
+    status_entry.delete(0,tk.END)
+    date_applied_entry.delete(0, tk.END)
+    follow_up_date_entry.delete(0, tk.END)
+    notes_entry.delete(0, tk.END)
 
 
 # Create a window
@@ -63,11 +71,12 @@ tree.grid(row=10, column=0, sticky='w')
 window.title("Job Application Tracker")
 window.minsize(width=800, height=600)
 
-load_from_json()
-
 for column in headers:
     tree.column(column, width=140)
     tree.heading(column, text=column)
+
+# Loads current json file
+load_from_json()
 
 form_frame = tk.Frame(window)
 form_frame.grid(row=0, column=0, sticky="w")
@@ -114,16 +123,8 @@ def save_job():
                              message="Please correctly insert data")
         return 
     tree.insert(parent= "", index="end", values=job_data)
-
-    company_entry.delete(0, tk.END)
-    role_entry.delete(0, tk.END)
-    job_link_entry.delete(0, tk.END)
-    status_entry.delete(0,tk.END)
-    date_applied_entry.delete(0, tk.END)
-    follow_up_date_entry.delete(0, tk.END)
-    notes_entry.delete(0, tk.END)
-
     save_to_json()
+    clear_entries()
 
 # Entries
 
@@ -172,6 +173,9 @@ def update_selected_row():
     update_row = tree.focus()
 
     if not update_row:
+        messagebox.showerror(
+        title="ERROR: NO ROW SELECTED",
+        message="Please select a row to update.") 
         return
 
     # Extract fresh text
@@ -200,17 +204,8 @@ def update_selected_row():
         )
         return
     tree.item(update_row, values=updated_data)
-
-    company_entry.delete(0, tk.END)
-    role_entry.delete(0, tk.END)
-    job_link_entry.delete(0, tk.END)
-    status_entry.delete(0,tk.END)
-    date_applied_entry.delete(0, tk.END)
-    follow_up_date_entry.delete(0, tk.END)
-    notes_entry.delete(0, tk.END)
-    
-
     save_to_json()
+    clear_entries()
 
 # Save job
 
