@@ -1,10 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
+import json
 
-# Create a window
-window = tk.Tk()
-
+# Headers
 headers = [
     "Company",
     "Role",
@@ -15,14 +14,58 @@ headers = [
     "Notes",
 ]
 
+# Helper Functions
+def save_to_json():
+    columns = tree["columns"]
+
+    rows = []
+
+    for row in tree.get_children():
+        row_values = tree.item(row, "values")
+
+        row_dict = dict(zip(columns, row_values))
+        rows.append(row_dict)
+    
+    try:
+        with open("jobs.json", "w", encoding="utf-8") as file:
+                json.dump(rows, file, indent=4)
+    except Exception as e:
+        messagebox.showerror("Error", f"Could not save file: {e}")
+
+def load_from_json():
+    try:
+        with open("jobs.json", "r", encoding="utf-8") as file:
+            rows = json.load(file)
+
+        # Wipe out UI clean before populating
+        for item in tree.get_children():
+            tree.delete(item)
+
+        columns = tree["columns"]
+
+        # Re-populate from JSON
+        for row_dict in rows:
+            row_values = [row_dict.get(col, "") for col in columns]
+            tree.insert("", index="end", values=row_values)
+    except FileNotFoundError:
+        pass
+    except Exception as e:
+        messagebox.showerror("Error", f"Load failed: {e}")
+
+
+
+# Create a window
+window = tk.Tk()
+
 tree = ttk.Treeview(window, columns=headers, show="headings")
 tree.grid(row=10, column=0, sticky='w')
 
 window.title("Job Application Tracker")
 window.minsize(width=800, height=600)
 
+load_from_json()
+
 for column in headers:
-    seperator = ttk.Separator()
     tree.column(column, width=140)
     tree.heading(column, text=column)
 
@@ -80,6 +123,8 @@ def save_job():
     follow_up_date_entry.delete(0, tk.END)
     notes_entry.delete(0, tk.END)
 
+    save_to_json()
+
 # Entries
 
 company_entry = tk.Entry(form_frame, width=70)
@@ -121,15 +166,13 @@ def delete_selected_row():
         return 
 
     tree.delete(*selected_rows)
+    save_to_json()
 
 def update_selected_row():
     update_row = tree.focus()
 
     if not update_row:
         return
-    
-    # Get full row array
-    current_row = list(tree.item(update_row, 'values'))
 
     # Extract fresh text
     new_company = company_entry.get().strip()
@@ -140,18 +183,34 @@ def update_selected_row():
     new_follow_up_date = follow_up_date_entry.get().strip()
     new_notes = notes_entry.get().strip()
 
-    current_row[0] = new_company
-    current_row[1] = new_role
-    current_row[2] = new_job_link
-    current_row[3] = new_status
-    current_row[4] = new_date_applied
-    current_row[5] = new_follow_up_date
-    current_row[6] = new_notes
+    updated_data = [
+    new_company,
+    new_role,
+    new_job_link,
+    new_status,
+    new_date_applied,
+    new_follow_up_date,
+    new_notes,
+]
 
-    tree.item(update_row, values=current_row)
+    if not all(updated_data):
+        messagebox.showerror(
+            title="ERROR: EMPTY FIELD",
+            message="Please correctly insert data"
+        )
+        return
+    tree.item(update_row, values=updated_data)
 
+    company_entry.delete(0, tk.END)
+    role_entry.delete(0, tk.END)
+    job_link_entry.delete(0, tk.END)
+    status_entry.delete(0,tk.END)
+    date_applied_entry.delete(0, tk.END)
+    follow_up_date_entry.delete(0, tk.END)
+    notes_entry.delete(0, tk.END)
+    
 
-
+    save_to_json()
 
 # Save job
 
@@ -161,7 +220,7 @@ select_button = tk.Button(form_frame, text="Show selection", command=print_selec
 select_button.grid(row=9, column=1)
 delete_button = tk.Button(form_frame, text="Delete Data", command=delete_selected_row)
 delete_button.grid(row=9, column=2)
-update_button = tk.Button(form_frame, text="Update selected row", comman=update_selected_row)
+update_button = tk.Button(form_frame, text="Update selected row", command=update_selected_row)
 update_button.grid(row=9, column=3)
 
 
