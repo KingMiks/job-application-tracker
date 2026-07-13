@@ -64,12 +64,13 @@ def save_job():
     follow_up_date = follow_up_date_entry.get().strip()
     notes = notes_entry.get().strip()
 
-    required_fields = [company, role, job_link, status, date_applied, follow_up_date, notes]
+    job_data = [company, role, job_link, status, date_applied, follow_up_date, notes]
 
-    if not all(required_fields):
+    if not all(job_data):
         messagebox.showerror(title="ERROR EMPTY FIELD", 
-                             message="Please enter valid company or role")
+                             message="Please correctly insert data")
         return 
+    tree.insert(parent= "", index="end", values=job_data)
 
     company_entry.delete(0, tk.END)
     role_entry.delete(0, tk.END)
@@ -78,8 +79,6 @@ def save_job():
     date_applied_entry.delete(0, tk.END)
     follow_up_date_entry.delete(0, tk.END)
     notes_entry.delete(0, tk.END)
-
-    tree.insert(company, role, job_link, status, date_applied, follow_up_date, notes)
 
 # Entries
 
