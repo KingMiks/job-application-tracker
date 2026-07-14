@@ -1,1 +1,29 @@
-[]
+[
+    {
+        "Company": "Microsoft",
+        "Role": "Software Engineer",
+        "Job link": "microsoft.com",
+        "Status": "Applied",
+        "Date applied": "1/1/21",
+        "Follow-up Date": "1/14/21",
+        "Notes": "Applied & Followed up"
+    },
+    {
+        "Company": "Amazon",
+        "Role": "QA Analyst",
+        "Job link": "amazon.com",
+        "Status": "Interview",
+        "Date applied": "2/2/22",
+        "Follow-up Date": "2/18/22",
+        "Notes": "Interview requested"
+    },
+    {
+        "Company": "Google",
+        "Role": "IT Support",
+        "Job link": "google.com",
+        "Status": "Follow-up",
+        "Date applied": "3/3/23",
+        "Follow-up Date": "3/21/23",
+        "Notes": "Follow up requested"
+    }
+]
