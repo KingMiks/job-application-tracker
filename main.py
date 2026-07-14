@@ -22,15 +22,16 @@ def save_to_json():
 
     for row in tree.get_children():
         row_values = tree.item(row, "values")
-
-        row_dict = dict(zip(columns, row_values))
-        rows.append(row_dict)
+        rows.append(dict(zip(columns, row_values)))
+        
     
     try:
         with open("jobs.json", "w", encoding="utf-8") as file:
-                json.dump(rows, file, indent=4)
+            json.dump(rows, file, indent=4)
+        return True
     except Exception as e:
         messagebox.showerror("Error", f"Could not save file: {e}")
+        return False
 
 def load_from_json():
     try:
@@ -56,7 +57,7 @@ def clear_entries():
     company_entry.delete(0, tk.END)
     role_entry.delete(0, tk.END)
     job_link_entry.delete(0, tk.END)
-    status_entry.delete(0,tk.END)
+    status_entry.delete(0, tk.END)
     date_applied_entry.delete(0, tk.END)
     follow_up_date_entry.delete(0, tk.END)
     notes_entry.delete(0, tk.END)
@@ -120,11 +121,12 @@ def save_job():
 
     if not all(job_data):
         messagebox.showerror(title="ERROR: EMPTY FIELD", 
-                             message="Please correctly insert data")
+                             message="Please complete every field.")
         return 
     tree.insert(parent= "", index="end", values=job_data)
-    save_to_json()
-    clear_entries()
+    
+    if save_to_json():
+        clear_entries()
 
 # Entries
 
@@ -150,33 +152,27 @@ notes_entry = tk.Entry(form_frame, width=70)
 notes_entry.grid(row=8, column=1)
 
 # Buttons
-
-def print_selected_row():
-    selected_data = tree.selection()
-
-    for data in selected_data:
-        row_values = tree.item(data)["values"]
-        print(row_values)
-
-def delete_selected_row():
+def delete_job():
     selected_rows = tree.selection()
 
     if not selected_rows:
         messagebox.showerror(title="ERROR: NO DATA SELECTED", 
-                             message="Please select a data entry")
+                             message="Please select a data entry.")
         return 
 
     tree.delete(*selected_rows)
     save_to_json()
 
-def update_selected_row():
-    update_row = tree.focus()
+def update_job():
+    selected_rows = tree.selection()
 
-    if not update_row:
+    if len(selected_rows) != 1:
         messagebox.showerror(
-        title="ERROR: NO ROW SELECTED",
-        message="Please select a row to update.") 
+            title="ERROR: INVALID SELECTION",
+            message="Please select exactly one job to update."
+        )
         return
+    update_row = selected_rows[0]
 
     # Extract fresh text
     new_company = company_entry.get().strip()
@@ -188,35 +184,34 @@ def update_selected_row():
     new_notes = notes_entry.get().strip()
 
     updated_data = [
-    new_company,
-    new_role,
-    new_job_link,
-    new_status,
-    new_date_applied,
-    new_follow_up_date,
-    new_notes,
+        new_company,
+        new_role,
+        new_job_link,
+        new_status,
+        new_date_applied,
+        new_follow_up_date,
+        new_notes,
 ]
 
     if not all(updated_data):
         messagebox.showerror(
             title="ERROR: EMPTY FIELD",
-            message="Please correctly insert data"
+            message="Please complete every field."
         )
         return
     tree.item(update_row, values=updated_data)
-    save_to_json()
-    clear_entries()
+    if save_to_json():
+        clear_entries()
 
 # Save job
 
-save_job_button = tk.Button(form_frame, text= "Save job", command=save_job)
-save_job_button.grid(row=9)
-select_button = tk.Button(form_frame, text="Show selection", command=print_selected_row)
-select_button.grid(row=9, column=1)
-delete_button = tk.Button(form_frame, text="Delete Data", command=delete_selected_row)
+save_button = tk.Button(form_frame, text="Save Job", command=save_job)
+save_button.grid(row=9)
+update_button = tk.Button(form_frame, text="Update Job", command=update_job)
+update_button.grid(row=9, column=1)
+delete_button = tk.Button(form_frame, text="Delete Job", command=delete_job)
 delete_button.grid(row=9, column=2)
-update_button = tk.Button(form_frame, text="Update selected row", command=update_selected_row)
-update_button.grid(row=9, column=3)
+
 
 
 
